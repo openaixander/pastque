@@ -1,0 +1,244 @@
+{% extends 'faculty/base.html' %}
+
+{% block title %}Download Study Materials - pastq{% endblock title %}
+
+{% block css %}
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+    }
+    .navbar {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        padding: 15px 0;
+    }
+    .navbar-brand img {
+        height: 40px;
+        margin-right: 10px;
+    }
+    .search-container {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-input {
+        border: 2px solid #6a11cb;
+        border-radius: 50px;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+        box-shadow: 0 0 0 0.25rem rgba(106, 17, 203, 0.25);
+        border-color: #2575fc;
+    }
+
+    .table-container {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow-x: auto;
+    }
+
+    .custom-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .custom-table th {
+        background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+    }
+
+    .custom-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .custom-table tbody tr:hover {
+        background-color: rgba(106, 17, 203, 0.05);
+    }
+
+    .btn-action {
+        padding: 8px 15px;
+        border-radius: 20px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-block;
+        margin: 0 5px;
+        color: white;
+    }
+
+    .btn-download {
+        background: linear-gradient(45deg, #2575fc 0%, #6a11cb 100%);
+    }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        color: white;
+    }
+
+    .btn-action.disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+
+    .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255,255,255,.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .material-name {
+        font-weight: 500;
+        color: #2575fc;
+    }
+{% endblock css %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="search-container">
+        <input type="text" id="searchInput" class="form-control mt-5 search-input" 
+               placeholder="Search by course code or title...">
+    </div>
+
+    <div class="table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>S/N</th>
+                    <th>Course Code</th>
+                    <th>Course Name</th>
+                    <th>Material Name</th>
+                    <th>Session</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="materialsTableBody">
+                {% for material in study_materials %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ material.course.code }}</td>
+                    <td>{{ material.course.name }}</td>
+                    <td class="material-name">{{ material.get_material_display_name }}</td>
+                    <td>{{ material.year }}</td>
+                    <td>
+                        {% if material.files %}
+                            <a href="{% url 'faculty:download_file' pk=material.id %}" 
+                               class="btn-action btn-download" 
+                               onclick="return handleDownload(event, this)">
+                                Download
+                            </a>
+                        {% else %}
+                            <span class="btn-action disabled">No Files</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const tableBody = document.getElementById('materialsTableBody');
+    let timeoutId;
+
+    searchInput.addEventListener('input', function(e) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            const query = e.target.value.trim();
+            
+            if (query.length > 0) {
+                fetch(`{% url 'faculty:search_study_materials' %}?q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        updateTable(data.results);
+                    })
+                    .catch(error => console.error('Error:', error));
+            } else {
+                // Reload the original table content
+                location.reload();
+            }
+        }, 300);
+    });
+
+    function updateTable(results) {
+        tableBody.innerHTML = '';
+        results.forEach((material, index) => {
+            const downloadButton = material.has_files 
+                ? `<a href="/faculty/download-file/${material.id}/" 
+                     class="btn-action btn-download" 
+                     onclick="return handleDownload(event, this)">Download</a>`
+                : '<span class="btn-action disabled">No Files</span>';
+
+            const row = `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${material.course_code}</td>
+                    <td>${material.course_name}</td>
+                    <td class="material-name">${material.material_name}</td>
+                    <td>${material.year}</td>
+                    <td>${downloadButton}</td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    async function handleDownload(event, element) {
+        event.preventDefault();
+        
+        const originalContent = element.innerHTML;
+        element.innerHTML = '<span class="loading-spinner"></span>';
+        element.style.pointerEvents = 'none';
+
+        try {
+            const response = await fetch(element.href);
+            if (!response.ok) throw new Error('Download failed');
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = response.headers.get('content-disposition').split('filename=')[1].replace(/"/g, '');
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (error) {
+            console.error('Download error:', error);
+            alert('Error downloading file. Please try again.');
+        } finally {
+            element.innerHTML = originalContent;
+            element.style.pointerEvents = 'auto';
+        }
+
+        return false;
+    }
+
+    window.handleDownload = handleDownload;
+});
+</script>
+{% endblock content %}
