@@ -44,6 +44,13 @@ class Question(models.Model):
 
     def __str__(self):
         return f"{self.quiz.title} - Question {self.order}"
+
+    def save(self, *args, **kwargs):
+        if self._state.adding:  # Only set order for new questions
+            last_order = Question.objects.filter(quiz=self.quiz).aggregate(
+                models.Max('order'))['order__max']
+            self.order = 1 if last_order is None else last_order + 1
+        super().save(*args, **kwargs)
     
 
 class Choice(models.Model):
@@ -57,6 +64,13 @@ class Choice(models.Model):
     
     def __str__(self):
         return self.choice_text
+    
+    def save(self, *args, **kwargs):
+        if self._state.adding:  # Only set order for new choices
+            last_order = Choice.objects.filter(question=self.question).aggregate(
+                models.Max('order'))['order__max']
+            self.order = 1 if last_order is None else last_order + 1
+        super().save(*args, **kwargs)
     
 
 class QuizAttempt(models.Model):
