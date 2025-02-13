@@ -3,6 +3,5 @@ venv/
 __pycache__/
 step_by_step.txt
 media/
-migrations/
 .env
 media/

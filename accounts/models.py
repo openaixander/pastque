@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-from cloudinary.models import CloudinaryField
+# from cloudinary.models import CloudinaryField
 # Create your models here.
 
 
@@ -106,10 +106,12 @@ class LecturerProfile(models.Model):
     department = models.CharField(max_length=100)
     faculty_position = models.CharField(max_length=20)
     office_number = models.CharField(max_length=50, blank=True, null=True)
-    id_card = CloudinaryField('image', 
-                          folder='id_cards/',  # Maintains your folder structure
-                          resource_type='image')
-
+    # id_card = CloudinaryField('image', 
+    #                       folder='id_cards/',  # Maintains your folder structure
+    #                       resource_type='image')
+    id_card = models.ImageField(
+        upload_to='id_cards/'
+    )
 
     def __str__(self):
         return f"{self.user.full_name} - {self.faculty_position}"

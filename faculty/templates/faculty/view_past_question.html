@@ -75,6 +75,28 @@
         margin-bottom: 10px;
     }
 
+    .image-card a {
+        display: block;
+        cursor: zoom-in;
+        transition: opacity 0.3s ease;
+    }
+    
+    .image-card a:hover {
+        opacity: 0.9;
+    }
+    
+    .image-card img {
+        width: 100%;
+        height: auto;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        transition: transform 0.3s ease;
+    }
+    
+    .image-card a:hover img {
+        transform: scale(1.02);
+    }
+
     .page-number {
         text-align: center;
         font-weight: 600;
@@ -143,14 +165,16 @@
         </div>
 
         {% if images %}
-            <div class="images-container">
-                {% for image in images %}
-                    <div class="image-card">
+        <div class="images-container">
+            {% for image in images %}
+                <div class="image-card">
+                    <a href="{{ image.image.url }}" target="_blank" title="Click to view full size">
                         <img src="{{ image.image.url }}" alt="Page {{ image.page_number }}">
-                        <div class="page-number">Page {{ image.page_number }}</div>
-                    </div>
-                {% endfor %}
-            </div>
+                    </a>
+                    <div class="page-number">Page {{ image.page_number }}</div>
+                </div>
+            {% endfor %}
+        </div>
         {% else %}
             <div class="no-images">
                 <h3>No images available for this past question.</h3>

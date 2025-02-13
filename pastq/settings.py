@@ -11,9 +11,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
+# import cloudinary
+# import cloudinary.uploader
+# import cloudinary.api
 from decouple import config
 from django.contrib.messages import constants as messages
 
@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'faculty',
     'quiz',
     'jazzmin',
-    'cloudinary_storage',
 
     # default apps
     'django.contrib.admin',
@@ -51,7 +50,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'cloudinary',
 ]
 
 AUTH_USER_MODEL = "accounts.Account"
@@ -177,19 +175,19 @@ EMAIL_HOST_USER ='gittyhub8@gmail.com'
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'ddbboagvh',
-    'API_KEY': config('CLOUDINARY_API_KEY'),
-    'API_SECRET': config('CLOUDINARY_API_SECRET'),
-}
+# CLOUDINARY_STORAGE = {
+#     'CLOUD_NAME': 'ddbboagvh',
+#     'API_KEY': config('CLOUDINARY_API_KEY'),
+#     'API_SECRET': config('CLOUDINARY_API_SECRET'),
+# }
 
 # Configure Cloudinary
-cloudinary.config(
-    cloud_name = CLOUDINARY_STORAGE['CLOUD_NAME'],
-    api_key = CLOUDINARY_STORAGE['API_KEY'],
-    api_secret = CLOUDINARY_STORAGE['API_SECRET'],
-    secure = True,
-)
+# cloudinary.config(
+#     cloud_name = CLOUDINARY_STORAGE['CLOUD_NAME'],
+#     api_key = CLOUDINARY_STORAGE['API_KEY'],
+#     api_secret = CLOUDINARY_STORAGE['API_SECRET'],
+#     secure = True,
+# )
 
 # Configure media files to use Cloudinary
 # DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

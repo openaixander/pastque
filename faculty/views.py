@@ -10,7 +10,7 @@ from django.contrib import messages
 from .models import StudentDashboardCard, LecturerDashboardCard, Department, Level, Semester, Course, Session, PastQuestion, StudyMaterial, Image
 from .forms import PastQuestionForm, StudyMaterialForm
 import os
-import cloudinary.uploader
+# import cloudinary.uploader
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.conf import settings
 from io import BytesIO
