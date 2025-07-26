@@ -15,6 +15,7 @@ from pathlib import Path
 # import cloudinary.uploader
 # import cloudinary.api
 from decouple import config
+import dj_database_url
 from django.contrib.messages import constants as messages
 
 
