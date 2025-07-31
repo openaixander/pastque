@@ -10,7 +10,7 @@ class Command(BaseCommand):
         User = get_user_model()
 
         try:
-            if User.objects.filter(is_admin=True).count() == 0:
+            if not User.objects.filter(is_superuser=True).exists():
                 username = os.environ.get('DJANGO_SUPERUSER_USERNAME', 'admin')
                 email = os.environ.get('DJANGO_SUPERUSER_EMAIL', 'admin@example.com')
                 password = os.environ.get('DJANGO_SUPERUSER_PASSWORD', 'admin')
