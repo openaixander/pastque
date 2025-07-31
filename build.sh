@@ -14,10 +14,10 @@ python manage.py collectstatic --noinput
 
 # Apply any outstanding database migrations
 python manage.py makemigrations
+python manage.py migrate accounts zero
 
 python manage.py migrate && python manage.py createsuperuser_if_none_exists
 
-python manage.py showmigrations accounts
 
 
 # python manage.py createsuperuser_if_none_exists
