@@ -32,7 +32,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['pastq-atcs.onrender.com']
+ALLOWED_HOSTS = ['.onrender.com']
 
 # WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ['.map']
 # Application definition
